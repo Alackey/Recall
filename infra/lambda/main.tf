@@ -1,5 +1,6 @@
 provider "aws" {
-  region = "${var.region}"
+  region  = var.region
+  version = ">= 2.7"
 }
 
 ############################################
@@ -24,11 +25,12 @@ resource "aws_iam_role" "lambda_role" {
   ]
 }
 EOF
+
 }
 
 resource "aws_iam_role_policy" "lambda_policy" {
   name = "recall_lambda_policy"
-  role = "${aws_iam_role.lambda_role.id}"
+  role = aws_iam_role.lambda_role.id
 
   policy = <<EOF
 {
@@ -51,6 +53,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
     ]
 }
 EOF
+
 }
 
 ############################################
@@ -58,16 +61,17 @@ EOF
 ############################################
 
 resource "aws_lambda_function" "recall_api" {
-  function_name = "recall-api"
+function_name = "recall-api"
 
-  # fetch the artifact from bucket created earlier
-  s3_bucket = "${var.artifact_bucket}"
-  s3_key    = "${var.artifact_zip_name_reminder}"
+# fetch the artifact from bucket created earlier
+s3_bucket = var.artifact_bucket
+s3_key    = var.artifact_zip_name_reminder
 
-  source_code_hash = "${filebase64sha256(var.artifact_zip_name_reminder)}"
+source_code_hash = filebase64sha256(var.artifact_zip_name_reminder)
 
-  handler = "${var.functions_file_name_getReminder}.getReminder_handler"
-  runtime = "python3.7"
+handler = "${var.functions_file_name_getReminder}.getReminder_handler"
+runtime = "python3.7"
 
-  role = "${aws_iam_role.lambda_role.arn}"
+role = aws_iam_role.lambda_role.arn
 }
+

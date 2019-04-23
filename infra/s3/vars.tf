@@ -5,3 +5,4 @@ variable "region" {
 variable "artifact_bucket" {
   default = "recall-lambda-artifacts"
 }
+
